@@ -21,18 +21,13 @@ except_words = ["アメリカ", "投票", "大統領", "結果", "指示", "民�
 
 def corpus_list(word_list): # corpusを作成する関数
     corpus = []
-    num = 0
+    temp = "アメリカ" # 「アメリカ」はのぞかれるのでこの単語で初期化を行う
     for text in word_list:
         for word in text[:len(text)]:
-            if (num == 0):
-                if not(word in except_words):
-                    temp = word
-                    num += 1
-            else:
-                if not(word in except_words):
-                    temp += (" " + word)
-        num = 0
+            if not(word in except_words):
+                temp += (" " + word)
         corpus.append(temp)
+    #print(corpus)
     return corpus
 
 
