@@ -9,12 +9,19 @@ import pandas as pd
 class DataAnalysis: # データを分析するクラス
     word_noun = [] # 形態素解析をした名詞を入れる配列
     word_nva  = [] # 形態素解析をした名詞、動詞、形容詞を入れる配列
+    text_list = []
 
-    def __init__(self, comment):
-        self.text_list = comment
+    def __init__(self):
+        pass
         
+    
+    def set_comment(self, comment): # コメントをセットする
+        self.text_list = comment
+    
 
     def parser(self): # 形態素解析をする
+        self.word_noun = [] # 初期化
+        self.word_nva  = [] # 初期化
         for text in self.text_list:
             tmp = ma.parse2df(text)
             self.word_noun.append(ma.get_noun(tmp))
@@ -40,8 +47,9 @@ if __name__ == "__main__":
     comment = []
     for text in questionnaire:
         comment.append(tf.text_formatting(text))
-
-    da = DataAnalysis(comment)
+    
+    da = DataAnalysis()
+    da.set_comment(comment)
     da.parser()
     
     dt_now = datetime.datetime.now()
@@ -55,6 +63,8 @@ if __name__ == "__main__":
     columns2 = ["date", "name", "job", "label", "comment", "url", "topic", "x", "y"]
     df2 = pd.DataFrame(data = list2, columns = columns2)
     df = df.append(df2)
-
+    
+    
     print(df) # 確認用
     df.to_csv('BDAdata/data.csv') # サーバー側に送るcsvファイル
+    
