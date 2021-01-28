@@ -21,8 +21,9 @@ except_words = ["アメリカ", "投票", "大統領", "結果", "指示", "民�
 
 def corpus_list(word_list): # corpusを作成する関数
     corpus = []
-    temp = "アメリカ"
+    temp = ""
     for text in word_list:
+        temp = ""
         for word in text[:len(text)]:
             if not(word in except_words):
                 temp += (" " + word)
@@ -58,7 +59,9 @@ def get_scoreX(word_list): # トランプ派かバイデン派かのスコアを
     
     for i in range(len(wc_array)):
         x += define_x(clf_model.predict_proba(wc_array[i:i+1]))
-    if (len(wc_array) != 0):
+    if (len(wc_array) == 0):
+        return 0
+    else:
         x /= len(wc_array)
     x_list = np.append(x_list, [x])
     x_std1 = (x - x_list.min()) / (x_list.max() - x_list.min())

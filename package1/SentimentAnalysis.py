@@ -10,6 +10,8 @@ df_dic = pd.read_csv('modelData/polar_dictionary.csv') # 極性辞書
 def get_scoreY(word_list): # 感情分析のスコアを返す関数
     y = 0
     y_list = np.array([-9.622200773328238, 2.095296998796651]) # 感情分析のスコアの最大値と最小値
+    if len(word_list) == 0:
+        return 0
     for text in word_list:
         y_tmp = 0
         for word in text:
@@ -23,6 +25,8 @@ def get_scoreY(word_list): # 感情分析のスコアを返す関数
         else:
             y += y_tmp
     y /= len(word_list)
+    if y == 0:
+        return 0.0
     y_list = np.append(y_list, [y])
     y_std = (y - y_list.min()) / (y_list.max() - y_list.min())
     return y_std * 2 - 1
