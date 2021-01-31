@@ -12,11 +12,11 @@ f = open('modelData/count_vectorizer.pickle', 'rb')
 cv = pickle.load(f)        # countVectorizerのロード
 f.close()
 
-except_words = ["アメリカ", "投票", "大統領", "結果", "指示", "民主党", "共和党", 
-                '失言', '嫌い', '世界', '副大統領', '個人的', '対応', '討論会', '議論',
-                '印象', '記事', '政治', '当選',
-                '明らか', '選挙結果', '数カ月',
-                '政権', 'ディベート', '勝利', '選挙', 'コロナ', '大統領選挙'] # ここに入れた単語が除外される
+except_words = ['アメリカ', 'バイデン', 'トランプ', '投票', '大統領', '結果', '指示', '民主党', '共和党',
+                '副大統領', 'コロナ', 'ヒラリー', '優勢', '世界', '個人的', '影響', '陣営', '相手', 
+                '討論会', '大統領選挙', '再選', '分断', '完全', '外交', '息子', '理由', '当選', '白人', 
+                '記事', '可能性', '比較', '英語', '追記', 'コメント', '候補', '批判', '対応','支持', 
+                '黒人'] # ここに入れた単語が除外される
 
 
 def corpus_list(word_list): # corpusを作成する関数
@@ -28,7 +28,6 @@ def corpus_list(word_list): # corpusを作成する関数
             if not(word in except_words):
                 temp += (" " + word)
         corpus.append(temp)
-    #print(corpus)
     return corpus
 
 
@@ -40,18 +39,14 @@ def define_x (result): # ナイーブベイズの確率からスコアを定義�
         ans = -result[0][1]
     else:
         if result[0][0] > result[0][1]:
-            ans = result[0][2] / 1.5
+            ans = result[0][2] / 4.0
         else:
-            ans = -(result[0][2] / 1.5)
-    if (abs(ans) > 0.5):
-        return (ans / abs(ans)) * 0.5
-    else:
-        return ans
+            ans = -(result[0][2] / 4.0)
+    return ans
 
 
 def get_scoreX(word_list): # トランプ派かバイデン派かのスコアを返す関数
     x = 0
-    x_list = np.array([0.4403539418449606, -0.5])  # NBのテストデータでの最大値と最小値
     
     corpus = corpus_list(word_list)
     wc = cv.transform(corpus)
@@ -59,16 +54,10 @@ def get_scoreX(word_list): # トランプ派かバイデン派かのスコアを
     
     for i in range(len(wc_array)):
         x += define_x(clf_model.predict_proba(wc_array[i:i+1]))
+        
     if (len(wc_array) == 0):
         return 0
     else:
         x /= len(wc_array)
-    x_list = np.append(x_list, [x])
-    x_std1 = (x - x_list.min()) / (x_list.max() - x_list.min())
-    x_scaled = x_std1 * 2 - 1
-    if x_scaled > 0:
-        x_scaled -= 0.45
-    else:
-        x_scaled += 0.45
-    x_std2 = (x_scaled + 0.55) / 1.1
-    return x_std2 * 2 - 1
+        
+    return x
